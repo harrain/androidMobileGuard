@@ -1,0 +1,84 @@
+<resources>
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- 隐藏标题栏 -->
+         <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="TitleStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:background">#8866ff00</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="ContentStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="NextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:background">@drawable/btn_green_selector</item>
+        <item name="android:drawableRight">@mipmap/next</item>
+        <item name="android:text">下一步</item>
+        <item name="android:onClick">next</item>
+    </style>
+
+    <style name="PreviousStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:background">@drawable/btn_green_selector</item>
+        <item name="android:drawableLeft">@mipmap/previous</item>
+        <item name="android:text">上一步</item>
+        <item name="android:onClick">previous</item>
+    </style>
+
+    <style name="widget_text">
+        <item name="android:textSize">16.0dip</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    
+    <style name="AlertDialogStyle" >
+
+        <item name="android:padding">@dimen/activity_horizontal_margin</item>
+
+
+    </style>
+
+    <!--<item name="android:layout">@layout/abc_alert_dialog_material</item>
+    <item name="android:background">@android:color/white</item>
+    <item name="listLayout">@layout/abc_select_dialog_material</item>
+    <item name="listItemLayout">@layout/select_dialog_item_material</item>
+    <item name="multiChoiceItemLayout">@layout/select_dialog_multichoice_material</item>
+    <item name="singleChoiceItemLayout">@layout/select_dialog_singlechoice_material</item>-->
+    <!--备用动画-->
+    <!--<item name="android:windowEnterAnimation">@anim/abc_grow_fade_in_from_bottom</item>
+    <item name="android:windowExitAnimation">@anim/abc_shrink_fade_out_from_bottom</item>
+    <item name="android:windowEnterAnimation">@anim/abc_popup_enter</item>
+    <item name="android:windowExitAnimation">@anim/abc_popup_exit</item>-->
+</resources>
