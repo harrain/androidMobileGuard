@@ -2,6 +2,7 @@ package com.phonesafe.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -10,8 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.phonesafe.R;
+import com.phonesafe.utils.MD5Utils;
 import com.phonesafe.utils.UIUtils;
-
 
 /**
  * ============================================================
@@ -39,6 +40,7 @@ public class EnterPwdActivity extends Activity implements OnClickListener {
 	private Button bt_delete;
 	private Button bt_ok;
 	private String packageName;
+	private String lockPass;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,8 @@ public class EnterPwdActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_set_pwd);
 		initUI();
+		SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+		lockPass = sp.getString("softwareLockPass","");
 	}
 
 	private void initUI() {
@@ -193,7 +197,8 @@ public class EnterPwdActivity extends Activity implements OnClickListener {
 		switch (v.getId()) {
 			case R.id.bt_ok:
 				String result = et_pwd.getText().toString();
-				if ("123".equals(result)) {
+				String encode = MD5Utils.encode(result);
+				if (lockPass.equals(encode)) {
 					// 如果密码正确。说明是自己人
 					/**
 					 * 是自己家人。不要拦截他

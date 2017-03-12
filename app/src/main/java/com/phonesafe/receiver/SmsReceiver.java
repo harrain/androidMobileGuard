@@ -77,7 +77,8 @@ public class SmsReceiver extends BroadcastReceiver {
 	public void lockScreen(Context context) {
 		if (mDPM.isAdminActive(mDeviceAdminSample)) {// 判断设备管理器是否已经激活
 			mDPM.lockNow();// 立即锁屏
-			mDPM.resetPassword("123456", 0);
+			String pass = context.getSharedPreferences("config",Context.MODE_PRIVATE).getString("lockScreenPass","");
+			mDPM.resetPassword(pass, 0);
 		} else {
 			Toast.makeText(context, "必须先激活设备管理器!", Toast.LENGTH_SHORT).show();
 		}

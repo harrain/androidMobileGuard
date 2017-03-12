@@ -1,26 +1,38 @@
 package com.phonesafe.service;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
+
+import com.fastaccess.permission.base.PermissionHelper;
+import com.fastaccess.permission.base.callback.OnPermissionCallback;
+
+import java.util.Arrays;
 
 /**
  * 获取经纬度坐标的service
- * 
  *
- * 
+ *
+ *
  */
-public class LocationService extends Service {
+public class LocationService extends Service{
 
 	private LocationManager lm;
 	private MyLocationListener listener;
 	private SharedPreferences mPref;
+
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -30,6 +42,7 @@ public class LocationService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
 
 		mPref = getSharedPreferences("config", MODE_PRIVATE);
 
@@ -43,8 +56,15 @@ public class LocationService extends Service {
 		String bestProvider = lm.getBestProvider(criteria, true);// 获取最佳位置提供者
 
 		listener = new MyLocationListener();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+				return;
+			}
+		}
 		lm.requestLocationUpdates(bestProvider, 0, 0, listener);// 参1表示位置提供者,参2表示最短更新时间,参3表示最短更新距离
 	}
+
 
 	class MyLocationListener implements LocationListener {
 
@@ -52,14 +72,14 @@ public class LocationService extends Service {
 		@Override
 		public void onLocationChanged(Location location) {
 			System.out.println("get location!");
-			
+
 			// 将获取的经纬度保存在sp中
 			mPref.edit()
 					.putString(
 							"location",
 							"j:" + location.getLongitude() + "; w:"
 									+ location.getLatitude()).commit();
-			
+
 			stopSelf();//停掉service
 		}
 
@@ -86,6 +106,12 @@ public class LocationService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+				return;
+			}
+		}
 		lm.removeUpdates(listener);// 当activity销毁时,停止更新位置, 节省电量
 	}
 

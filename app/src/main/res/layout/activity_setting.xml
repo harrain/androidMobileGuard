@@ -17,6 +17,11 @@
         itheima:desc_off="软件锁已经关闭"
         itheima:title="软件锁设置"/>
 
+    <com.phonesafe.view.SettingClickView
+        android:id="@+id/slv_software_lockpass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <com.phonesafe.view.SettingItemView
         android:id="@+id/siv_update"
         android:layout_width="match_parent"
@@ -24,6 +29,7 @@
         itheima:desc_off="自动更新已关闭"
         itheima:desc_on="自动更新已开启"
         itheima:title="自动更新设置" />
+
     <com.phonesafe.view.SettingItemView
         android:id="@+id/siv_address"
         android:layout_width="match_parent"
@@ -44,9 +50,15 @@
         android:id="@+id/siv_callsafe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        itheima:desc_off="黑名单更新已关闭"
-        itheima:desc_on="黑名单更新已开启"
-        itheima:title="黑名单更新设置" />
+        itheima:desc_off="黑名单拦截已关闭"
+        itheima:desc_on="黑名单拦截已开启"
+        itheima:title="黑名单拦截设置" />
+
+    <com.phonesafe.view.SettingClickView
+        android:id="@+id/siv_remoteLockScreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+         />
 
     <com.phonesafe.view.SettingClickView
         android:id="@+id/scv_address_style"

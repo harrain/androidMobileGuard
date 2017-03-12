@@ -1,5 +1,6 @@
 package com.phonesafe.service;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,8 +8,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
@@ -95,13 +99,18 @@ public class AddressService extends Service {
 	/**
 	 * 监听去电的广播接受者 需要权限: android.permission.PROCESS_OUTGOING_CALLS
 	 * 
-	 * @author Kevin
+	 *
 	 * 
 	 */
 	class OutCallReceiver extends BroadcastReceiver {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+				if (ActivityCompat.checkSelfPermission(context, Manifest.permission.PROCESS_OUTGOING_CALLS) != PackageManager.PERMISSION_GRANTED){
+					return;
+				}
+			}
 			String number = getResultData();// 获取去电电话号码
 
 			String address = AddressDao.getAddress(number);

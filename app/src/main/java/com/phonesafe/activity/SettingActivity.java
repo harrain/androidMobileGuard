@@ -6,14 +6,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.phonesafe.R;
 import com.phonesafe.service.AddressService;
 import com.phonesafe.service.CallSafeService;
 import com.phonesafe.service.RocketService;
 import com.phonesafe.service.WatchDogService;
+import com.phonesafe.utils.MD5Utils;
 import com.phonesafe.utils.ServiceStatusUtils;
 import com.phonesafe.view.SettingClickView;
 import com.phonesafe.view.SettingItemView;
@@ -24,7 +32,7 @@ import com.phonesafe.view.SettingItemView;
  *
  * 
  */
-public class SettingActivity extends Activity {
+public class SettingActivity extends Activity implements OnClickListener {
 
 	private SettingItemView sivUpdate;// 设置升级
 	private SettingItemView sivAddress;// 设置升级
@@ -35,6 +43,7 @@ public class SettingActivity extends Activity {
 
 	private Intent watchDogIntent;
 	private SharedPreferences mPref;
+	private String dialogTitle = new String("远程锁屏密码设置");
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +55,11 @@ public class SettingActivity extends Activity {
 		initAddressView();
 		initAddressStyle();
 		initAddressLocation();
-		initLockScreenSetting();
+		initRemoteLockScreen();
+		initRocketSetting();
 		initBlackView();
 		initWatchDog();
+		setSoftWareLockPass();
 	}
 
 	/**
@@ -188,7 +199,7 @@ public class SettingActivity extends Activity {
 		});
 	}
 
-	public void initLockScreenSetting(){
+	public void initRocketSetting(){
 		final SettingItemView sivRocket = (SettingItemView) findViewById(R.id.siv_startRocket);
 
 		boolean serviceRunning = ServiceStatusUtils.isServiceRunning(this,"com.mobilesafe.service.RocketService");
@@ -271,5 +282,147 @@ public class SettingActivity extends Activity {
 				}
 			}
 		});
+	}
+
+	public void setSoftWareLockPass(){
+		SettingClickView swlp = (SettingClickView) findViewById(R.id.slv_software_lockpass);
+		swlp.setTitle("软件锁密码设置");
+		swlp.setDesc("点击设置软件锁密码");
+
+		swlp.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				startsoftlockdialog();
+				dialogTitle = "rrrrrr";
+				Log.e("dialogTitle",dialogTitle);
+			}
+		});
+
+	}
+
+	private void startsoftlockdialog(){
+		showPasswordSetDailog(new String("软件锁密码设置"),new AlertDialogEngineInterface() {
+			@Override
+			public void saveSp(String value) {
+				if (value == null){
+					return;
+				}
+				mPref.edit().putString("softwareLockPass",MD5Utils.encode(value)).commit();
+			}
+
+		});
+	}
+
+	public void initRemoteLockScreen(){
+		SettingClickView rls = (SettingClickView) findViewById(R.id.siv_remoteLockScreen);
+		rls.setTitle("远程锁屏密码设置");
+		rls.setDesc("点击进行设置密码");
+
+		rls.setOnClickListener(this);
+
+	}
+
+	private void lala(String s){
+		Log.e("---",s);
+	}
+
+	public void startremotelockdialog(){
+		lala("远程锁屏密码设置");
+
+		showPasswordSetDailog("远程锁屏密码设置",new AlertDialogEngineInterface() {
+			@Override
+			public void saveSp(String value) {
+				if (value == null){
+					return;
+				}
+				mPref.edit()
+						.putString("lockScreenPass",
+								MD5Utils.encode(value)).commit();
+			}
+
+		});
+	}
+
+	public void showPasswordSetDailog(String title, final AlertDialogEngineInterface dialogInterface) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		final AlertDialog dialog = builder.create();
+
+		View view = View.inflate(this, R.layout.dailog_set_password, null);
+		//dialog.setView(view);// 将自定义的布局文件设置给dialog
+		dialog.setView(view, 0, 0, 0, 0);// 设置边距为0,保证在2.x的版本上运行没问题
+		TextView tvTitle = (TextView) view.findViewById(R.id.dialog_tv_title);
+		//CharSequence charSequence = title.subSequence(0,title.length());
+		Log.e("xxx",title);
+		dialogTitle = "sjkljjka";
+		Log.e("dialogTitle",dialogTitle);
+		tvTitle.setText(title);
+		final EditText etPassword = (EditText) view
+				.findViewById(R.id.et_password);
+		final EditText etPasswordConfirm = (EditText) view
+				.findViewById(R.id.et_password_confirm);
+
+		Button btnOK = (Button) view.findViewById(R.id.btn_ok);
+		Button btnCancel = (Button) view.findViewById(R.id.btn_cancel);
+
+		btnOK.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				String password = etPassword.getText().toString();
+				String passwordConfirm = etPasswordConfirm.getText().toString();
+				// password!=null && !password.equals("")
+				if (!TextUtils.isEmpty(password) && !passwordConfirm.isEmpty()) {
+					if (password.equals(passwordConfirm)) {
+						dialogInterface.saveSp(password);
+
+						dialog.dismiss();
+
+					} else {
+						Toast.makeText(SettingActivity.this, "两次密码不一致!",
+								Toast.LENGTH_SHORT).show();
+					}
+				} else {
+					Toast.makeText(SettingActivity.this, "输入框内容不能为空!",
+							Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
+
+		btnCancel.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();// 隐藏dialog
+			}
+		});
+
+		dialog.show();
+
+		try {
+
+			WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+			params.width= 700;
+			//params.height=700;
+			params.alpha = 1f;
+			dialog.getWindow().setAttributes(params);
+
+		}catch (NullPointerException e){
+			Log.wtf("alertDialogwindow",e);
+		}
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()){
+			case R.id.siv_remoteLockScreen:
+				startremotelockdialog();
+				break;
+		}
+	}
+
+	private interface AlertDialogEngineInterface{
+
+		void saveSp(String value);
+
 	}
 }
